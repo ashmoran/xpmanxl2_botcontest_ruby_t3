@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require File.expand_path(File.dirname(__FILE__) + '/../lib/bot')
+
+# trap "SIGINT" do
+#   puts "\nHI MARK!!!"
+#   exit 0
+# end
+
+Bot.new(STDIN, STDOUT).run

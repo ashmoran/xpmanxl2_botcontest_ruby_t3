@@ -1,0 +1,26 @@
+require 'autotest/bundler'
+
+case RUBY_PLATFORM
+when /darwin/
+  require 'autotest/fsevent'
+when /linux/
+  require 'autotest/inotify'
+end
+
+Autotest.add_hook :initialize do |at|
+  at.add_exception %r%^\./(?:doc|log|public|tmp|\.git|\.hg|\.svn|_darcs|framework|gems|\.DS_Store|autotest|bin|.*\.sqlite3|.*\.thor)%
+  %w[.svn .hg .git _darcs .autotest].each { |exception| at.add_exception(exception) }
+  
+  at.clear_mappings
+
+  # Just the defaults from RSpec for now
+  at.add_mapping(%r%^spec/.*_spec\.rb$%) { |filename, _|
+    filename
+  }
+  at.add_mapping(%r%^lib/(.*)\.rb$%) { |_, m|
+    ["spec/#{m[1]}_spec.rb"]
+  }
+  at.add_mapping(%r%^spec/(spec_helper|shared/.*)\.rb$%) {
+    at.files_matching %r%^spec/.*_spec\.rb$%
+  }
+end
